@@ -1,55 +1,67 @@
-# Detect OS and architecture
+#---------------------------------------------------------------------------
+#detect OS system
+
 OS_SYSTEM := $(shell uname -s)
-ARCH := $(shell uname -m)
 
 ifeq ($(OS),Windows_NT)
 	OS_SYSTEM := WINDOWS
 endif
 
-ifeq ($(OS_SYSTEM),Darwin)
-	ifeq ($(ARCH),arm64)
-		OS_SYSTEM := MACARM
-	else
-		OS_SYSTEM := MAC64
-	endif
-endif
-
-# SDL2 configuration
-#SDL2_LIB_WINDOWS := -Ithird_party/include -Lthird_party/lib
-SDL2_LIB_MACARM := -I/opt/homebrew/include -L/opt/homebrew/lib
-SDL2_LIB := $(SDL2_LIB_$(OS_SYSTEM))
-
 SDL2_OPTIONS_WINDOWS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 SDL2_OPTIONS_OTHER := -lSDL2 -lSDL2_image -lSDL2_ttf
-SDL2_OPTIONS := $(SDL2_OPTIONS_$(if $(filter WINDOWS,$(OS_SYSTEM)),WINDOWS,OTHER))
 
-# Compiler and flags
+ifeq ($(OS_SYSTEM), WINDOWS)
+	SDL2_OPTIONS := $(SDL2_OPTIONS_WINDOWS)
+else
+	SDL2_OPTIONS := $(SDL2_OPTIONS_OTHER)
+endif
+
+#---------------------------------------------------------------------------
+#param for this project
+
 CXX := g++
 CXX_FLAGS := -std=c++11
 
-# Source files and directories
-SRC_DIR := ./src
-OBJ_DIR := ./build
-SRC_FILES := $(wildcard $(SRC_DIR)/**/*.cpp $(SRC_DIR)/*.cpp)
-OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
-
-# Target executable
 TARGET := game
 
-# Default target
+OFILES := screen.o picture.o map.o character.o coord.o object.o \
+			destination.o chest.o score.o
+
+#---------------------------------------------------------------------------
+#build target for this project
 all: $(TARGET)
 
-# Build rules
-$(TARGET): $(OBJ_FILES)
-	$(CXX) $^ -o $@ $(SDL2_LIB) $(SDL2_OPTIONS) $(CXX_FLAGS)
+$(TARGET): ./src/main.cpp $(OFILES)
+	g++ $^ -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS) 
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $< -c -o $@ $(SDL2_LIB) $(SDL2_OPTIONS) $(CXX_FLAGS)
+screen.o: ./src/views/screen.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
 
-# Clean rule
+picture.o: ./src/views/picture.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+map.o: ./src/views/map.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+character.o: ./src/object/character.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+coord.o: ./src/util/coord.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+object.o: ./src/object/object.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+destination.o: ./src/object/destination.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+chest.o: ./src/object/chest.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
+score.o: ./src/util/score.cpp
+	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
+
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -f *.o $(TARGET)
 
-# Phony targets
 .PHONY: all clean
