@@ -1,0 +1,7 @@
+.DS_store
+.vscode
+game.exe
+game
+bin
+build/*
+*.o
