@@ -5,3 +5,7 @@ game
 bin
 build/*
 *.o
+game.html
+game.js
+game.wasm
+game.data

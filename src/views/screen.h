@@ -67,6 +67,7 @@ class app{
         void init();
         void set_map_info(map *_map);
         void set_map_render(map *_map);
+        void loop_step();
         void run();
         void switch_map(std::string _str);
         void ttf_init();
