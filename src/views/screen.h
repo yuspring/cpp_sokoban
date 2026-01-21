@@ -29,12 +29,19 @@ class app{
         std::vector<dest> _dest;
         score _s;
         std::string _map_name;
+        int map_index;
         TTF_Font* ttf;
+        TTF_Font* ttf_small;
+        TTF_Font* ttf_large;
         SDL_Surface* surfaceText;
         SDL_Texture* ttf_welcome;
+        SDL_Texture* ttf_welcome2;
         SDL_Texture* ttf_welcome1;
         SDL_Texture* ttf_switch;
         SDL_Texture* ttf_break;
+        SDL_Texture* ttf_congra;
+        SDL_Texture* ttf_hint;
+        SDL_Texture* ttf_all_done;
         bool game_run;
         bool show_switch;
 

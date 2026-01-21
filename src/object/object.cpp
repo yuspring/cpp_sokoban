@@ -7,7 +7,7 @@ void object::render(SDL_Rect rec, SDL_Renderer *renderer, SDL_Texture *tex){
 
 void object::set_coord(int x, int y){
         _X = y * 40 + 40;
-        _Y = x * 40 + 40;
+        _Y = x * 40 + 80;
         _x = x;
         _y = y;
         set_rect(_X, _Y);

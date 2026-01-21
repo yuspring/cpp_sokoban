@@ -61,7 +61,7 @@ void map::map_render(SDL_Texture *tex1, SDL_Renderer *renderer, char _c){
     for(int i = 1; i <= _X; i++){
         for(int j = 1; j <= _Y; j++){
             
-            SDL_Rect rec = {40 * j, 40 * i, 40, 40};
+            SDL_Rect rec = {40 * j, 40 * (i + 1), 40, 40};
             if(_map[i-1][j-1] == _c){
                 SDL_RenderCopy(renderer, tex1, nullptr, &rec);
             }
