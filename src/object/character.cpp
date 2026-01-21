@@ -124,7 +124,6 @@ SDL_Rect player::player_walk(SDL_Event event, map* _map){
     
                 }
             }
-            std::cout << this->_x << " " << this->_y << '\n';
         }
         
         return rec;

@@ -9,19 +9,20 @@ app::app(){
     game_run = false;
     show_switch = true;
     map_index = 1;
+    surfaceText = nullptr;
 }
 
 app::~app(){
     TTF_CloseFont(ttf);
     TTF_CloseFont(ttf_small);
     TTF_CloseFont(ttf_large);
-    SDL_DestroyTexture(ttf_welcome);
-    SDL_DestroyTexture(ttf_welcome1);
-    SDL_DestroyTexture(ttf_welcome2);
-    SDL_DestroyTexture(ttf_break);
-    SDL_DestroyTexture(ttf_congra);
-    SDL_DestroyTexture(ttf_hint);
-    SDL_DestroyTexture(ttf_all_done);
+    ttf_welcome.destroy();
+    ttf_welcome1.destroy();
+    ttf_welcome2.destroy();
+    ttf_break.destroy();
+    ttf_congra.destroy();
+    ttf_hint.destroy();
+    ttf_all_done.destroy();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -40,7 +41,7 @@ void app::init(){
     
     app::ttf_init();
     pic_mp = init_picture(renderer);
-
+    master_map_mp = init_map();
 }
 
 void app::set_map_info(map *_map){
@@ -78,7 +79,7 @@ void app::run(){
         
         while(SDL_PollEvent(&event)){
             polled = true;
-            last_event = event; // Capture the last valid event
+            last_event = event;
 
             if(event.type == SDL_QUIT){
                 quit = true;
@@ -94,7 +95,7 @@ void app::run(){
                     }
                     else if(_s._score == _dest.size()) {
                         map_index++;
-                        if (map_index > 5) map_index = 1; // Loop back to map1 after 5 maps, or adjust as needed
+                        if (map_index > 5) map_index = 1;
                         std::string next_map = "map" + std::to_string(map_index);
                         switch_map(next_map);
                     }
@@ -119,47 +120,36 @@ void app::run(){
             app::set_map_render(&map_mp[this->_map_name]);
             
             if(_s._score == _dest.size()){
-                int w, h;
                 // Line 1: CONGRATULATIONS!
-                SDL_QueryTexture(ttf_congra, NULL, NULL, &w, &h);
-                SDL_Rect ttf_ract_con = { (500 - w) / 2, 380, w, h };
-                SDL_RenderCopy(renderer,ttf_congra ,NULL,&ttf_ract_con);
+                SDL_Rect ttf_ract_con = { (500 - ttf_congra.w) / 2, 380, ttf_congra.w, ttf_congra.h };
+                SDL_RenderCopy(renderer,ttf_congra.tex ,NULL,&ttf_ract_con);
 
                 // Line 2: Message
-                int w2, h2;
                 if (map_index == 5) {
-                    SDL_QueryTexture(ttf_all_done, NULL, NULL, &w2, &h2);
-                    SDL_Rect ttf_ract = { (500 - w2) / 2, 410, w2, h2 };
-                    SDL_RenderCopy(renderer, ttf_all_done, NULL, &ttf_ract);
+                    SDL_Rect ttf_ract = { (500 - ttf_all_done.w) / 2, 410, ttf_all_done.w, ttf_all_done.h };
+                    SDL_RenderCopy(renderer, ttf_all_done.tex, NULL, &ttf_ract);
                 } else {
-                    SDL_QueryTexture(ttf_break, NULL, NULL, &w2, &h2);
-                    SDL_Rect ttf_ract = { (500 - w2) / 2, 410, w2, h2 };
-                    SDL_RenderCopy(renderer, ttf_break, NULL, &ttf_ract);
+                    SDL_Rect ttf_ract = { (500 - ttf_break.w) / 2, 410, ttf_break.w, ttf_break.h };
+                    SDL_RenderCopy(renderer, ttf_break.tex, NULL, &ttf_ract);
                 }
             }
 
             // Game Hint: Arrow keys to move, R to reset
-            int w, h;
-            SDL_QueryTexture(ttf_hint, NULL, NULL, &w, &h);
-            SDL_Rect ttf_ract_hint = { (500 - w) / 2, 560, w, h };
-            SDL_RenderCopy(renderer, ttf_hint, NULL, &ttf_ract_hint);
+            SDL_Rect ttf_ract_hint = { (500 - ttf_hint.w) / 2, 560, ttf_hint.w, ttf_hint.h };
+            SDL_RenderCopy(renderer, ttf_hint.tex, NULL, &ttf_ract_hint);
         }
         else{
-            int w, h;
             // Title: ttf_welcome1 ("PUSH BOX")
-            SDL_QueryTexture(ttf_welcome1, NULL, NULL, &w, &h);
-            SDL_Rect ttf_ract1 = { (500 - w) / 2, 150, w, h };
-            SDL_RenderCopy(renderer,ttf_welcome1 ,NULL,&ttf_ract1);
+            SDL_Rect ttf_ract1 = { (500 - ttf_welcome1.w) / 2, 150, ttf_welcome1.w, ttf_welcome1.h };
+            SDL_RenderCopy(renderer,ttf_welcome1.tex ,NULL,&ttf_ract1);
 
             // Subtitle Line 1: "PLEASE PRESS SPACE"
-            SDL_QueryTexture(ttf_welcome, NULL, NULL, &w, &h);
-            SDL_Rect ttf_ract = { (500 - w) / 2, 380, w, h };
-            SDL_RenderCopy(renderer,ttf_welcome,NULL,&ttf_ract);
+            SDL_Rect ttf_ract = { (500 - ttf_welcome.w) / 2, 380, ttf_welcome.w, ttf_welcome.h };
+            SDL_RenderCopy(renderer,ttf_welcome.tex,NULL,&ttf_ract);
 
             // Subtitle Line 2: "TO START"
-            SDL_QueryTexture(ttf_welcome2, NULL, NULL, &w, &h);
-            SDL_Rect ttf_ract2 = { (500 - w) / 2, 410, w, h };
-            SDL_RenderCopy(renderer,ttf_welcome2,NULL,&ttf_ract2);
+            SDL_Rect ttf_ract2 = { (500 - ttf_welcome2.w) / 2, 410, ttf_welcome2.w, ttf_welcome2.h };
+            SDL_RenderCopy(renderer,ttf_welcome2.tex,NULL,&ttf_ract2);
         }
         
         SDL_RenderPresent(renderer);
@@ -168,8 +158,8 @@ void app::run(){
 }
 
 void app::switch_map(std::string _str){
-    map_mp = init_map();
     this->_map_name = _str;
+    map_mp[_str] = master_map_mp[_str];
     app::set_map_info(&map_mp[this->_map_name]);
     _s._score = 0;
     show_switch = true;
@@ -181,24 +171,20 @@ void app::ttf_init(){
     ttf_small = TTF_OpenFont(font_path, 18);
     ttf_large = TTF_OpenFont(font_path, 56);
     
-    surfaceText = TTF_RenderUTF8_Blended(ttf_large, "PUSH BOX", {0,0,0});
-    ttf_welcome1 = SDL_CreateTextureFromSurface(renderer, surfaceText);
+    int h; // local temp for QueryTexture
+    auto createText = [&](TTF_Font* f, const char* text, TextTexture& out) {
+        if (surfaceText) SDL_FreeSurface(surfaceText);
+        surfaceText = TTF_RenderUTF8_Blended(f, text, {0,0,0});
+        out.tex = SDL_CreateTextureFromSurface(renderer, surfaceText);
+        SDL_QueryTexture(out.tex, NULL, NULL, &out.w, &h); 
+        out.h = h;
+    };
 
-    surfaceText = TTF_RenderUTF8_Blended(ttf, "PLEASE PRESS SPACE", {0,0,0});
-    ttf_welcome = SDL_CreateTextureFromSurface(renderer, surfaceText);
-
-    surfaceText = TTF_RenderUTF8_Blended(ttf, "TO START", {0,0,0});
-    ttf_welcome2 = SDL_CreateTextureFromSurface(renderer, surfaceText);
-
-    surfaceText = TTF_RenderUTF8_Blended(ttf, "CONGRATULATIONS!", {0,0,0});
-    ttf_congra = SDL_CreateTextureFromSurface(renderer, surfaceText);
-
-    surfaceText = TTF_RenderUTF8_Blended(ttf, "PRESS SPACE FOR NEXT", {0,0,0});
-    ttf_break = SDL_CreateTextureFromSurface(renderer, surfaceText);
-
-    surfaceText = TTF_RenderUTF8_Blended(ttf_small, "ARROW TO MOVE          R TO RESET", {0,0,0});
-    ttf_hint = SDL_CreateTextureFromSurface(renderer, surfaceText);
-
-    surfaceText = TTF_RenderUTF8_Blended(ttf, "ALL LEVELS COMPLETED", {0,0,0});
-    ttf_all_done = SDL_CreateTextureFromSurface(renderer, surfaceText);
+    createText(ttf_large, "PUSH BOX", ttf_welcome1);
+    createText(ttf, "PLEASE PRESS SPACE", ttf_welcome);
+    createText(ttf, "TO START", ttf_welcome2);
+    createText(ttf, "CONGRATULATIONS!", ttf_congra);
+    createText(ttf, "PRESS SPACE FOR NEXT", ttf_break);
+    createText(ttf_small, "ARROW TO MOVE          R TO RESET", ttf_hint);
+    createText(ttf, "ALL LEVELS COMPLETED", ttf_all_done);
 }
