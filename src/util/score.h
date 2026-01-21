@@ -2,7 +2,6 @@
 #define SRC_UTIL_SCORE
 #include "../object/destination.h"
 #include "../views/map.h"
-#include <iostream>
 #include <vector>
 
 class score{

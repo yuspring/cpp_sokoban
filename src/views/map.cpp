@@ -2,19 +2,27 @@
 
 
 void map::map_load(std::string _path){
-    std::ifstream file( _path.c_str(), std::ios::in);
-    int cnt = 0;
+    FILE* file = fopen(_path.c_str(), "r");
+    if (!file) {
+        return;
+    }
+
     int x, y;
-    file >> x >> y;
-    //std::cout << x << " " << y << "\n";
+    if (fscanf(file, "%d %d", &x, &y) != 2) {
+        fclose(file);
+        return;
+    }
     this->_X = x;
     this->_Y = y;
-    while (!file.eof()){
-        file >> _map[cnt];
-        //std::cout << _map[cnt] << '\n';
+
+    char line[128];
+    int cnt = 0;
+    while (cnt < 50 && fscanf(file, "%127s", line) == 1) {
+        _map[cnt] = line;
         cnt++;
     }
 
+    fclose(file);
 }
 
 void map::map_edit(int x, int y, char _c){
@@ -33,10 +41,10 @@ int map::get_mapsize_Y()
 void map::map_show(){
     for(int i = 1; i <= _X; i++){
         for(int j = 1; j <= _Y; j++){
-            std::cout << _map[i-1][j-1];
+            //std::cout << _map[i-1][j-1];
            
         }
-        std::cout << '\n';
+        //std::cout << '\n';
     }
 }
 

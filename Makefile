@@ -55,9 +55,9 @@ OFILES := screen.o picture.o map.o character.o coord.o object.o \
 #---------------------------------------------------------------------------
 # Emscripten configuration for WebAssembly
 EMCC := emcc
-EMCC_FLAGS := -std=c++11 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 \
+EMCC_FLAGS := -std=c++11 -Oz -flto -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 \
               -s ALLOW_MEMORY_GROWTH=1 -s SDL2_IMAGE_FORMATS='["png", "bmp"]' \
-              --preload-file fonts --preload-file imgs --preload-file maps \
+              --preload-file fonts --preload-file imgs --preload-file maps --closure 1 -s FILESYSTEM=1 -s ENVIRONMENT='web'\
               --shell-file resources/shell.html
 WASM_TARGET := server/dist/game.html
 WASM_OFILES := screen.wasm.o picture.wasm.o map.wasm.o character.wasm.o \

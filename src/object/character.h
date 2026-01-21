@@ -1,6 +1,5 @@
 #ifndef SRC_OBJECT_CHARACTER_H
 #define SRC_OBJECT_CHARACTER_H
-#include <iostream>
 #include <SDL2/SDL.h>
 #include "../views/map.h"
 #include "chest.h"

@@ -1,7 +1,6 @@
 #ifndef SRC_VIEWS_SCREEN_H
 #define SRC_VIEWS_SCREEN_H
 
-#include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>

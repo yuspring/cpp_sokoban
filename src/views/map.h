@@ -1,13 +1,10 @@
 #ifndef SRC_VIEWS_MAP
 #define SRC_VIEWS_MAP
 
-#include <iostream>
 #include <string>
-#include <fstream>
 #include <cstdio>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <string>
 //#include "../util/coord.h"
 #include <vector>
 #include <map>
