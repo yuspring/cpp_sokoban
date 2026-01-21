@@ -63,38 +63,50 @@ void app::set_map_render(map* _map){
 void app::run(){
 
     while(!quit){
-        SDL_PollEvent(&event);
-
-        if(event.type == SDL_QUIT){
-            quit = true;
-            break;
-        }
+        bool polled = false;
+        SDL_Event last_event;
         
-        if(event.type == SDL_KEYDOWN){
-            if (event.key.keysym.sym == SDLK_1){
-                switch_map("map1");
+        while(SDL_PollEvent(&event)){
+            polled = true;
+            last_event = event; // Capture the last valid event
+
+            if(event.type == SDL_QUIT){
+                quit = true;
+                break;
             }
-            else if (event.key.keysym.sym == SDLK_2){
-                switch_map("map2");
-            }
-            else if (event.key.keysym.sym == SDLK_3){
-                switch_map("map3");
-            }
-            else if (event.key.keysym.sym == SDLK_4){
-                switch_map("map4");
-            }
-            else if (event.key.keysym.sym == SDLK_5){
-                switch_map("map5");
-            }
-            else if(event.key.keysym.sym == SDLK_SPACE){
-                if(!game_run){
+            
+            if(event.type == SDL_KEYDOWN){
+                if (event.key.keysym.sym == SDLK_1){
                     switch_map("map1");
-                    game_run = true;   
+                }
+                else if (event.key.keysym.sym == SDLK_2){
+                    switch_map("map2");
+                }
+                else if (event.key.keysym.sym == SDLK_3){
+                    switch_map("map3");
+                }
+                else if (event.key.keysym.sym == SDLK_4){
+                    switch_map("map4");
+                }
+                else if (event.key.keysym.sym == SDLK_5){
+                    switch_map("map5");
+                }
+                else if(event.key.keysym.sym == SDLK_SPACE){
+                    if(!game_run){
+                        switch_map("map1");
+                        game_run = true;   
+                    }
+                }
+                else if(event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT){
+                    show_switch = false;
                 }
             }
-            else if(event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT){
-                show_switch = false;
-            }
+        }
+
+        if (polled) {
+            event = last_event;
+        } else {
+            event.type = 0; 
         }
 
         SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 255);

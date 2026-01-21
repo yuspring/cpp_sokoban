@@ -17,7 +17,7 @@ SDL_Rect player::player_walk(SDL_Event event, map* _map){
     SDL_Rect rec = { _X , _Y, 40 ,40};
         
         switch (event.type) {
-            case SDL_KEYUP: {
+            case SDL_KEYDOWN: {
                 if(event.key.keysym.sym == SDLK_UP){
 
                     switch(player::ifItem(*_map, _x-1, _y)){
