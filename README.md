@@ -35,3 +35,33 @@ brew install sdl2_ttf
 make
 ./game
 ```
+
+## WebAssembly
+使用 Emscripten 編譯成 WebAssembly，可以在瀏覽器中執行遊戲
+
+### 前置需求
+確認系統已安裝 Emscripten 與 go
+
+```sh
+emcc --version
+go version
+```
+
+### 編譯 WASM 版本
+
+```sh
+make wasm
+```
+
+### 執行遊戲
+
+```sh
+make run_server
+```
+在瀏覽器開啟：`http://localhost:8000/game.html`
+
+# 編譯成二進位黨檔案
+```sh
+make build_server
+```
+

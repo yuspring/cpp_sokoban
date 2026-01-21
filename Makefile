@@ -54,13 +54,12 @@ OFILES := screen.o picture.o map.o character.o coord.o object.o \
 
 #---------------------------------------------------------------------------
 # Emscripten configuration for WebAssembly
-# EMCC := emcc
-EMCC := /usr/lib/emscripten/emcc
+EMCC := emcc
 EMCC_FLAGS := -std=c++11 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 \
               -s ALLOW_MEMORY_GROWTH=1 -s SDL2_IMAGE_FORMATS='["png"]' \
               --preload-file fonts --preload-file imgs --preload-file maps \
-              --shell-file shell.html
-WASM_TARGET := game.html
+              --shell-file resources/shell.html
+WASM_TARGET := server/dist/game.html
 WASM_OFILES := screen.wasm.o picture.wasm.o map.wasm.o character.wasm.o \
                coord.wasm.o object.wasm.o destination.wasm.o chest.wasm.o score.wasm.o
 
@@ -99,7 +98,8 @@ score.o: ./src/util/score.cpp
 	g++ $< -c -o $@ $(CXX_FLAGS) $(SDL2_OPTIONS)
 
 clean:
-	rm -f *.o *.wasm.o $(TARGET) $(WASM_TARGET) game.js game.wasm game.data
+	rm -f *.o *.wasm.o $(TARGET)
+	rm -rf server/dist
 
 #---------------------------------------------------------------------------
 # Build WASM object files
@@ -134,6 +134,13 @@ score.wasm.o: ./src/util/score.cpp
 wasm: $(WASM_TARGET)
 
 $(WASM_TARGET): ./src/main.cpp $(WASM_OFILES)
+	mkdir -p server/dist
 	$(EMCC) $^ -o $@ $(EMCC_FLAGS)
 
-.PHONY: all wasm clean
+run_server: wasm
+	go run ./server/main.go
+
+build_server: wasm
+	CGO_ENABLED=0 go build -o server ./server/main.go
+
+.PHONY: all wasm clean run_server build_server
