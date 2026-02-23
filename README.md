@@ -4,6 +4,9 @@
 # 遊戲內容
 我推的箱子
 
+可以在下列網址上遊玩
+https://game.syurl.cc
+
 ## 遊戲畫面
 ![](./resources/picture.png)
 
